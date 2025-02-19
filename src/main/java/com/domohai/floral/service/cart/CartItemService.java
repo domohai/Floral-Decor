@@ -3,6 +3,7 @@ package com.domohai.floral.service.cart;
 import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Cart;
 import com.domohai.floral.model.CartItem;
+import com.domohai.floral.model.Product;
 import com.domohai.floral.repo.CartItemRepository;
 import com.domohai.floral.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,10 @@ public class CartItemService implements ICartItemService {
         if (item != null) {
             item.setQuantity(item.getQuantity() + quantity);
         } else {
+            Product product = productService.getProductById(productId);
             item = new CartItem();
-            item.setProduct(productService.getProductById(productId));
+            item.setUnitPrice(product.getPrice());
+            item.setProduct(product);
             item.setQuantity(quantity);
             item.setCart(cart);
             // cascade = CascadeType.ALL will save the cart item to the database
@@ -52,7 +55,10 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
-    public void updateItemQuantity(Integer cartId, Integer cartItemId, Integer quantity) {
-        // This is not required for the current implementation
+    public void updateItemQuantity(Integer cartItemId, Integer quantity) {
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found with id: " + cartItemId));
+        item.setQuantity(quantity);
+        cartItemRepository.save(item);
     }
 }

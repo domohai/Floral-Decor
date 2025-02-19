@@ -38,12 +38,29 @@ public class CartService implements ICartService {
         Cart cart =  cartRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id: " + id));
         cart.updateTotalPrice();
+        cartRepository.save(cart);
+        return cart;
+    }
+    
+    @Override
+    public Cart getCartByUserId(Integer userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + userId));
+//        cart.updateTotalPrice();
+//        cartRepository.save(cart);
         return cart;
     }
     
     @Override
     public void updateCart(Cart cart) {
         cartRepository.save(cart);
+    }
+    
+    @Override
+    public void updateItemQuantity(Integer cartId, Integer cartItemId, Integer quantity) {
+        // delegate the logic to the cart item service
+        cartItemService.updateItemQuantity(cartItemId, quantity);
+        cartRepository.save(getCartById(cartId));
     }
     
     @Override

@@ -1,13 +1,19 @@
 package com.domohai.floral.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-
-import java.math.BigDecimal;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+@Table(name = "order_items")
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -16,22 +22,22 @@ public class CartItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
     
-    @Column(name = "unit_price", nullable = false)
-    private BigDecimal unitPrice;
-    
-    @Column(name = "total_price", nullable = false)
-    private BigDecimal totalPrice;
-    
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
-    private Cart cart;
+    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
+    private Order order;
     
-    public CartItem() {
+    public OrderItem() {
+    }
+    
+    public OrderItem(Integer quantity, Product product, Order order) {
+        this.quantity = quantity;
+        this.product = product;
+        this.order = order;
     }
     
     public Integer getId() {
@@ -50,23 +56,6 @@ public class CartItem {
         this.quantity = quantity;
     }
     
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
-    }
-    
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-    
-    public BigDecimal getTotalPrice() {
-        setTotalPrice();
-        return totalPrice;
-    }
-    
-    public void setTotalPrice() {
-        this.totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
-    
     public Product getProduct() {
         return product;
     }
@@ -75,11 +64,11 @@ public class CartItem {
         this.product = product;
     }
     
-    public Cart getCart() {
-        return cart;
+    public Order getOrder() {
+        return order;
     }
     
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

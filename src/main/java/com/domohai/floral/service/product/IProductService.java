@@ -9,6 +9,7 @@ public interface IProductService {
     Product getProductById(Integer id);
     Product addProduct(RequestProduct product);
     Product updateProduct(Integer id, RequestProduct product);
+    void updateStock(Integer id, Integer stock);
     void deleteProductById(Integer id);
     List<Product> getAllProducts();
     List<Product> getProductsByCategoryName(String categoryName);

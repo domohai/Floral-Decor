@@ -1,5 +1,5 @@
 spring:
-  apllication:
+  application:
     name: Floral Decor
   config:
     import: optional:file:.env[.properties]
@@ -30,4 +30,4 @@ spring:
 
 server:
   servlet:
-    context-path: /api
+    context-path: /api # All APIs start with "/api"

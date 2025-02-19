@@ -89,6 +89,14 @@ public class ProductService implements IProductService {
         return productRepository.save(productToUpdate);
     }
     
+    @Override
+    public void updateStock(Integer id, Integer stock) {
+        Product productToUpdate = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product to update stock not found with id: " + id));
+        productToUpdate.setStock(stock);
+        productRepository.save(productToUpdate);
+    }
+    
     // DELETE
     @Override
     public void deleteProductById(Integer id) {
