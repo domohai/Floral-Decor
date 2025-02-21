@@ -55,6 +55,7 @@ public class Cart {
     }
     
     public BigDecimal getTotalPrice() {
+        updateTotalPrice();
         return totalPrice;
     }
     

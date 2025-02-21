@@ -1,6 +1,7 @@
 package com.domohai.floral.controller.order;
 
 import com.domohai.floral.controller.ApiResponse;
+import com.domohai.floral.dto.OrderDTO;
 import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Order;
 import com.domohai.floral.service.order.IOrderService;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -29,8 +32,8 @@ public class OrderController {
             @PathVariable(name = "id") Integer id
     ) {
         try {
-            Order order = orderService.getOrderById(id);
-            return ResponseEntity.ok(new ApiResponse("Order retrieved successfully", order));
+            OrderDTO orderDto = orderService.getOrderById(id);
+            return ResponseEntity.ok(new ApiResponse("Order retrieved successfully", orderDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -42,19 +45,20 @@ public class OrderController {
             @PathVariable(name = "userId") Integer userId
     ) {
         try {
-            return ResponseEntity.ok(new ApiResponse("Orders retrieved successfully", orderService.getOrdersByUserId(userId)));
+            List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
+            return ResponseEntity.ok(new ApiResponse("Orders retrieved successfully", orders));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
     
-    @PostMapping("/create")
+    @PostMapping("/create/user/{userId}")
     public ResponseEntity<ApiResponse> createOrder(
-            @RequestParam(name = "userId") Integer userId
+            @PathVariable(name = "userId") Integer userId
     ) {
         try {
-            Order order = orderService.createOrder(userId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Order created successfully", order));
+            OrderDTO orderDto = orderService.createOrder(userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Order created successfully", orderDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }

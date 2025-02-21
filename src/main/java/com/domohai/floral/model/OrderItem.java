@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
@@ -22,12 +24,18 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "unit_price", nullable = false)
+    private BigDecimal unitPrice = BigDecimal.ZERO;
+    
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+    
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
     private Order order;
     
@@ -70,5 +78,22 @@ public class OrderItem {
     
     public void setOrder(Order order) {
         this.order = order;
+    }
+    
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+    
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    public BigDecimal getTotalPrice() {
+        setTotalPrice();
+        return totalPrice;
+    }
+    
+    public void setTotalPrice() {
+        this.totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

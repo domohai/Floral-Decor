@@ -5,7 +5,6 @@ import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Cart;
 import com.domohai.floral.model.User;
 import com.domohai.floral.repo.CartRepository;
-import com.domohai.floral.repo.RoleRepository;
 import com.domohai.floral.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final CartRepository cartRepository;
     
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, CartRepository cartRepository) {
+    public UserService(UserRepository userRepository,  CartRepository cartRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.cartRepository = cartRepository;
     }
     
