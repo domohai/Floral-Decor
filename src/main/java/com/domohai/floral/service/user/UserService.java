@@ -1,11 +1,13 @@
 package com.domohai.floral.service.user;
 
 import com.domohai.floral.controller.user.RegisterRequest;
+import com.domohai.floral.enums.RoleType;
 import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Cart;
 import com.domohai.floral.model.Role;
 import com.domohai.floral.model.User;
 import com.domohai.floral.repo.CartRepository;
+import com.domohai.floral.repo.RoleRepository;
 import com.domohai.floral.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,13 +17,18 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
     
     @Autowired
-    public UserService(UserRepository userRepository, CartRepository cartRepository, BCryptPasswordEncoder encoder) {
+    public UserService(UserRepository userRepository,
+                       CartRepository cartRepository,
+                       BCryptPasswordEncoder encoder,
+                       RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
         this.encoder = encoder;
+        this.roleRepository = roleRepository;
     }
     
     @Override
@@ -46,6 +53,9 @@ public class UserService implements IUserService {
         user.setEmail(registerRequest.getEmail());
         user.setName(registerRequest.getName());
         user.setPassword(encryptedPassword);
+        // add role relationship
+        Role role = roleRepository.findByRole(RoleType.ROLE_USER).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        user.getRoles().add(role);
         User savedUser = userRepository.save(user);
         Cart cart = new Cart();
         cart.setUser(savedUser);

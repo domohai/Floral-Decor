@@ -16,7 +16,7 @@ public class Role {
     private Integer id;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "name", nullable = false)
     private RoleType role = RoleType.ROLE_USER;
     
     @JsonIgnore
