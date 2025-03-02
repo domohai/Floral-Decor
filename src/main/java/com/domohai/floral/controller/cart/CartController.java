@@ -1,8 +1,8 @@
 package com.domohai.floral.controller.cart;
 
 import com.domohai.floral.controller.ApiResponse;
+import com.domohai.floral.dto.CartDTO;
 import com.domohai.floral.exception.ResourceNotFoundException;
-import com.domohai.floral.model.Cart;
 import com.domohai.floral.service.cart.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class CartController {
     public ResponseEntity<ApiResponse> getCartById(
             @PathVariable(name = "id") Integer id
     ) {
-        Cart cart = null;
+        CartDTO cart = null;
         try {
             cart = cartService.getCartById(id);
         } catch (ResourceNotFoundException e) {

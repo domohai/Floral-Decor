@@ -5,13 +5,18 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TYPE role_enum AS ENUM ('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN');
+-- CREATE TYPE role_enum AS ENUM ('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN');
 CREATE TABLE roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL DEFAULT 'ROLE_USER'
+);
+
+CREATE TABLE user_roles (
     user_id INT NOT NULL,
-    role role_enum DEFAULT 'ROLE_USER',
-    UNIQUE(user_id, role),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    role_id INT NOT NULL
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE categories (

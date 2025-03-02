@@ -24,9 +24,15 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
     private Set<Role> roles = new HashSet<>();
     
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
     
@@ -43,22 +49,16 @@ public class User {
         this.password = password;
     }
     
-    public void addRole(Role role) {
-        roles.add(role);
-        role.setUser(this);
-    }
-    
-    public void removeRole(Role role) {
-        roles.remove(role);
-        role.setUser(null);
-    }
-    
     public Set<Role> getRoles() {
         return roles;
     }
     
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getPassword() {
+        return password;
     }
     
     public Integer getId() {

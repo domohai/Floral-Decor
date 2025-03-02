@@ -3,21 +3,25 @@ package com.domohai.floral.service.user;
 import com.domohai.floral.controller.user.RegisterRequest;
 import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Cart;
+import com.domohai.floral.model.Role;
 import com.domohai.floral.model.User;
 import com.domohai.floral.repo.CartRepository;
 import com.domohai.floral.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
+    private final BCryptPasswordEncoder encoder;
     
     @Autowired
-    public UserService(UserRepository userRepository,  CartRepository cartRepository) {
+    public UserService(UserRepository userRepository, CartRepository cartRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
+        this.encoder = encoder;
     }
     
     @Override
@@ -37,12 +41,12 @@ public class UserService implements IUserService {
         if (user != null) {
             throw new IllegalArgumentException("Email already exists");
         }
+        String encryptedPassword = encoder.encode(registerRequest.getPassword());
         user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setName(registerRequest.getName());
-        user.setPassword(registerRequest.getPassword());
+        user.setPassword(encryptedPassword);
         User savedUser = userRepository.save(user);
-        // TODO: Add role to user
         Cart cart = new Cart();
         cart.setUser(savedUser);
         cartRepository.save(cart);

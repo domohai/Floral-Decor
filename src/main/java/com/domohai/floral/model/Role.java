@@ -4,10 +4,12 @@ import com.domohai.floral.enums.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
-@Table(name = "roles", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "role"})
-})
+@Table(name = "roles")
 public class Role {
     @Id
     @Column(name = "id")
@@ -18,9 +20,8 @@ public class Role {
     private RoleType role = RoleType.ROLE_USER;
     
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
     
     public Role() {
     }
@@ -33,11 +34,11 @@ public class Role {
         this.role = role;
     }
     
-    public User getUser() {
-        return user;
+    public Collection<User> getUsers() {
+        return users;
     }
     
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 }

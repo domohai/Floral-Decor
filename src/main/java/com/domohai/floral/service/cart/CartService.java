@@ -1,9 +1,11 @@
 package com.domohai.floral.service.cart;
 
+import com.domohai.floral.dto.CartDTO;
 import com.domohai.floral.exception.ResourceNotFoundException;
 import com.domohai.floral.model.Cart;
 import com.domohai.floral.model.User;
 import com.domohai.floral.repo.CartRepository;
+import com.domohai.floral.utils.CartUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,34 +23,34 @@ public class CartService implements ICartService {
     }
     
     @Override
-    public Cart createCart(User user) {
+    public CartDTO createCart(User user) {
         Optional<Cart> existingCart = cartRepository.findByUserId(user.getId());
         if (existingCart.isPresent()) {
             // return the existing cart if it exists
-            return existingCart.get();
+            return CartUtils.convertToCartDTO(existingCart.get());
         }
         // create a new cart if it does not exist
         Cart cart = new Cart();
         cart.setUser(user);
-        return cartRepository.save(cart);
+        return CartUtils.convertToCartDTO(cartRepository.save(cart));
     }
     
     @Override
-    public Cart getCartById(Integer id) {
+    public CartDTO getCartById(Integer id) {
         Cart cart =  cartRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id: " + id));
         cart.updateTotalPrice();
         cartRepository.save(cart);
-        return cart;
+        return CartUtils.convertToCartDTO(cart);
     }
     
     @Override
-    public Cart getCartByUserId(Integer userId) {
+    public CartDTO getCartByUserId(Integer userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + userId));
 //        cart.updateTotalPrice();
 //        cartRepository.save(cart);
-        return cart;
+        return CartUtils.convertToCartDTO(cart);
     }
     
     @Override
@@ -60,7 +62,8 @@ public class CartService implements ICartService {
     public void updateItemQuantity(Integer cartId, Integer cartItemId, Integer quantity) {
         // delegate the logic to the cart item service
         cartItemService.updateItemQuantity(cartItemId, quantity);
-        cartRepository.save(getCartById(cartId));
+        cartRepository.save(cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id: " + cartId)));
     }
     
     @Override

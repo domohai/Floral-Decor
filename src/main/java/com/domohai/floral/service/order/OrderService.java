@@ -8,6 +8,7 @@ import com.domohai.floral.model.CartItem;
 import com.domohai.floral.model.Order;
 import com.domohai.floral.model.OrderItem;
 import com.domohai.floral.model.Product;
+import com.domohai.floral.repo.CartRepository;
 import com.domohai.floral.repo.OrderRepository;
 import com.domohai.floral.service.cart.ICartService;
 import com.domohai.floral.service.product.IProductService;
@@ -24,13 +25,13 @@ import java.util.Set;
 public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final IProductService productService;
-    private final ICartService cartService;
+    private final CartRepository cartRepository;
     
     @Autowired
-    public OrderService(OrderRepository orderRepository, IProductService productService, ICartService cartService) {
+    public OrderService(OrderRepository orderRepository, IProductService productService, CartRepository cartRepository) {
         this.orderRepository = orderRepository;
         this.productService = productService;
-        this.cartService = cartService;
+        this.cartRepository = cartRepository;
     }
     
     @Override
@@ -50,7 +51,8 @@ public class OrderService implements IOrderService {
     
     @Override
     public OrderDTO createOrder(Integer userId) {
-        Cart cart = cartService.getCartByUserId(userId);
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user with id: " + userId));
         Order order = createOrderFromCart(cart);
         order.setUser(cart.getUser());
         order.setCreatedAt(LocalDateTime.now());

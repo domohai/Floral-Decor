@@ -31,3 +31,8 @@ spring:
 server:
   servlet:
     context-path: /api # All APIs start with "/api"
+
+auth:
+  jwt:
+    secret: ${SECRET_KEY}
+    expiration: ${EXPIRE_TIME}
