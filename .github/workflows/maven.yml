@@ -32,6 +32,8 @@ jobs:
         echo EXPIRE_TIME=${{secrets.EXPIRE_TIME }} >> .env
         echo APPLICATION_PORT=8080 >> .env
         echo DATABASE_PORT=5432 >> .env
+        echo DATABASE_HOST=localhost >> .env
+        echo DATABASE_NAME=floral
         echo DATABASE_USER=${{ secrets.DATABASE_USER }} >> .env
         echo DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} >> .env
         cat .env
