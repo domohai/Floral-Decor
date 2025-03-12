@@ -30,6 +30,7 @@ jobs:
         touch .env
         echo "${{ secrets.DEVELOPMENT }}" >> .env
         cat .env
+        cat ${{ secrets.DEVELOPMENT }}
         
     - name: Build with Maven
       run: mvn -B package --file pom.xml
