@@ -9,7 +9,13 @@ import com.domohai.floral.model.User;
 import com.domohai.floral.repo.CartRepository;
 import com.domohai.floral.repo.RoleRepository;
 import com.domohai.floral.repo.UserRepository;
+import com.domohai.floral.security.jwt.JWTFilter;
+import com.domohai.floral.security.jwt.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +24,20 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder encoder;
     
     @Autowired
     public UserService(UserRepository userRepository,
                        CartRepository cartRepository,
                        BCryptPasswordEncoder encoder,
-                       RoleRepository roleRepository) {
+                       RoleRepository roleRepository,
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
+        this.authenticationManager = authenticationManager;
     }
     
     @Override

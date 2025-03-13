@@ -1,10 +1,14 @@
 package com.domohai.floral.security.jwt;
 
 import com.domohai.floral.security.user.CustomUserDetails;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +20,8 @@ import java.util.List;
 
 @Component
 public class JWTService {
+    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
+    
     @Value("${auth.jwt.secret}")
     private String secretKey;
     @Value("${auth.jwt.expiration}")
@@ -36,7 +42,7 @@ public class JWTService {
                 .signWith(key()).compact();
     }
     
-    public String getUsername(String token) {
+    public String getUsernameFromJwt(String token) {
         return Jwts.parser()
             .verifyWith(key())
             .build()
@@ -48,9 +54,16 @@ public class JWTService {
         try {
             Jwts.parser().verifyWith(key()).build().parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtException(e.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
         }
+        return false;
     }
     
     private SecretKey key() {
