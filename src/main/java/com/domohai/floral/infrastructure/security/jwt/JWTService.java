@@ -1,6 +1,6 @@
-package com.domohai.floral.security.jwt;
+package com.domohai.floral.infrastructure.security.jwt;
 
-import com.domohai.floral.security.user.CustomUserDetails;
+import com.domohai.floral.infrastructure.security.user.CustomUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -27,6 +27,15 @@ public class JWTService {
     @Value("${auth.jwt.expiration}")
     private long validityInMilliseconds;
     
+    /**
+     * Generates a JWT token for the authenticated user.
+     *
+     * This method creates a JWT token containing the user's username, ID, and roles
+     * as claims. The token is signed using a secret key and includes an expiration time.
+     *
+     * @param authentication The authentication object containing the user's details.
+     * @return A signed JWT token as a String.
+     */
     public String generateToken(Authentication authentication) {
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         List<String> roles = user.getAuthorities().stream()
@@ -42,6 +51,15 @@ public class JWTService {
                 .signWith(key()).compact();
     }
     
+    /**
+     * Extracts the username from a given JWT token.
+     *
+     * This method parses the provided JWT token to retrieve the subject,
+     * which represents the username of the authenticated user.
+     *
+     * @param token The JWT token from which the username is to be extracted.
+     * @return The username contained in the JWT token.
+     */
     public String getUsernameFromJwt(String token) {
         return Jwts.parser()
             .verifyWith(key())
@@ -50,6 +68,16 @@ public class JWTService {
             .getPayload().getSubject();
     }
     
+    /**
+     * Validates a given JWT token.
+     *
+     * This method checks the validity of the provided JWT token by parsing it
+     * and verifying its signature using the secret key. If the token is valid,
+     * the method returns true. Otherwise, it logs the specific error and returns false.
+     *
+     * @param token The JWT token to be validated.
+     * @return true if the token is valid, false otherwise.
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parser().verifyWith(key()).build().parseSignedClaims(token);

@@ -19,18 +19,18 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   main:
     banner-mode: off
-  data:
-    rest:
-      base-path: /api
+#  data:
+#    rest:
+#      base-path: /api
   logging:
     level:
       org:
         springframework:
           security: DEBUG
 
-server:
-  servlet:
-    context-path: /api # All APIs start with "/api"
+#server:
+#  servlet:
+#    context-path: /api # All APIs start with "/api"
 
 auth:
   jwt:

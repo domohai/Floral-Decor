@@ -4,8 +4,8 @@ import com.domohai.floral.controller.ApiResponse;
 import com.domohai.floral.dto.JWTResponse;
 import com.domohai.floral.dto.UserDTO;
 import com.domohai.floral.model.User;
-import com.domohai.floral.security.jwt.JWTService;
-import com.domohai.floral.security.user.CustomUserDetails;
+import com.domohai.floral.infrastructure.security.jwt.JWTService;
+import com.domohai.floral.infrastructure.security.user.CustomUserDetails;
 import com.domohai.floral.service.user.IUserService;
 import com.domohai.floral.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +42,7 @@ public class UserController {
     ) {
         User savedUser = userService.createUser(user);
         UserDTO userDTO = new UserDTO(savedUser);
+        System.out.println("User registered: " + userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse( "User registered successfully", userDTO));
     }
     

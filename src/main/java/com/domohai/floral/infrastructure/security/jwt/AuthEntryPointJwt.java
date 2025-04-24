@@ -1,4 +1,4 @@
-package com.domohai.floral.security.jwt;
+package com.domohai.floral.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
