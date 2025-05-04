@@ -1,33 +1,52 @@
 services:
   floral:
+    image: 'domohai12/floral:1.0.0'
+    container_name: floral-app
+    restart: unless-stopped
     ports:
       - '8080:8080'
-    build:
-      context: .
-      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     env_file:
-      - .env
+      - .env.docker
     networks:
       - floral-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   postgres:
-    image: 'postgres:latest'
-    restart: always
+    image: 'postgres:17-alpine'
+    container_name: floral-db
+    restart: unless-stopped
     ports:
-      - '${DATABASE_PORT}:5432'
+      - '${DATABASE_PORT:-5432}:5432'
+    env_file:
+      - .env.docker
     environment:
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
-      - pgdata:/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - floral-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  pgdata:
+  postgres_data:
+    name: floral-postgres-data
 
 networks:
   floral-network:
+    name: floral-network

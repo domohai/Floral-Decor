@@ -26,7 +26,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: setup .env file
+    - name: setup .env.local file
       env:
         KEYS: ${{ secrets.DEVELOPMENT }}
       run: |

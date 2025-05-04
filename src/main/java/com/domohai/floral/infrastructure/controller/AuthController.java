@@ -2,9 +2,10 @@ package com.domohai.floral.infrastructure.controller;
 
 import com.domohai.floral.application.usecase.LoginUserUseCase;
 import com.domohai.floral.application.usecase.RegisterUserUseCase;
-import com.domohai.floral.infrastructure.controller.dto.LoginRequest;
-import com.domohai.floral.infrastructure.controller.dto.RegisterRequest;
-import com.domohai.floral.infrastructure.controller.dto.TokenResponse;
+import com.domohai.floral.infrastructure.dto.ApiResponse;
+import com.domohai.floral.infrastructure.dto.JwtResponse;
+import com.domohai.floral.infrastructure.dto.LoginRequest;
+import com.domohai.floral.infrastructure.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,13 +40,15 @@ public class AuthController {
      * POST /api/auth/login
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(
+    public ResponseEntity<ApiResponse<JwtResponse>> login(
             @RequestBody LoginRequest request
     ) {
         String token = loginUserUseCase.login(
             request.getEmail(),
             request.getPassword()
         );
-        return ResponseEntity.ok(new TokenResponse(token));
+        JwtResponse tokenData = new JwtResponse(token);
+        ApiResponse<JwtResponse> response = ApiResponse.success(tokenData);
+        return ResponseEntity.ok(response);
     }
 }

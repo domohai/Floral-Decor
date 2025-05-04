@@ -1,9 +1,9 @@
 package com.domohai.floral.utils;
 
-import com.domohai.floral.dto.CartDTO;
-import com.domohai.floral.dto.CartItemDTO;
-import com.domohai.floral.model.Cart;
-import com.domohai.floral.model.CartItem;
+import com.domohai.floral.old.dto.CartDTO;
+import com.domohai.floral.old.dto.CartItemDTO;
+import com.domohai.floral.old.model.Cart;
+import com.domohai.floral.old.model.CartItem;
 
 import java.util.ArrayList;
 import java.util.List;

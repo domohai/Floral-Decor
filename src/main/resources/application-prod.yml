@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: Floral Decor
+  config:
+    import: optional:file:.env.local[.properties]
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    out-of-order: true
+    ignore-future-migrations: true
+    connect-retries: 3
+  jpa:
+    hibernate:
+      ddl-auto: validate # Validate the schema, don't make changes to the database
+    show-sql: false # Disable SQL logging in production
+    properties:
+      hibernate:
+        format_sql: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  sql:
+#    init:
+#      mode: always # Initialize database on startup
+#      schema-locations: classpath:db/schema.sql # Schema creation script
+#      data-locations: classpath:db/data.sql # Initial data script
+#      continue-on-error: false # Fail if initialization scripts have errors
+  main:
+    banner-mode: off
+  logging:
+    level:
+      root: ERROR
+      com.domohai.floral: INFO
+      org.springframework.security: WARN
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+
+auth:
+  jwt:
+    secret: ${SECRET_KEY}
+    expiration: ${EXPIRE_TIME}
